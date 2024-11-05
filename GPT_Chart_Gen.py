@@ -5,8 +5,9 @@ import os
 from io import StringIO
 A = StringIO()
 sdata = pd.read_csv("downloaded_Dataset.csv")
-
-os.environ["OPENAI_API_KEY"] = "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"
+with open("GPT.txt","r") as Open:
+  Key = Open.read().strip()
+os.environ["OPENAI_API_KEY"] = Key
 client = OpenAI()
 def PromptResponse (PromptU):
   prompt = PromptU + " " + f"Using the following chunk of data:\n\n{sdata}\n\n" + f"\n"

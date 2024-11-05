@@ -1,7 +1,10 @@
 import replicate
 import os
 import json
-os.environ["REPLICATE_API_TOKEN"] = "Token"
+
+with open("ReplicateLlama.txt","r") as Open:
+  Key = Open.read().strip()
+os.environ["REPLICATE_API_TOKEN"] = Key
 api = replicate.Client(api_token=os.environ["REPLICATE_API_TOKEN"])
 
  
