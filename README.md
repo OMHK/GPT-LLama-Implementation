@@ -1,0 +1,1 @@
+This repo contains code for a personal upskiling project, it encompases API requests, basic file handeling, communicating with GPT and LLama to serve multiple functions such as chart generation and chat capabilities.
