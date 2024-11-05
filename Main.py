@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template,Response
+from flask import Flask, request, Response
 import pandas as pd
 import logging 
 import json
@@ -18,87 +18,61 @@ logger = setup_logger()
 
 app = Flask(__name__)
 
-@app.errorhandler(500)
-def internal_error(error):
-    return render_template('500.html'), 500
-
-@app.errorhandler(400)
-def internal_error(error):
-    return render_template('400.html'), 400
-
-@app.errorhandler(401)
-def internal_error(error):
-    return render_template('401.html'), 401
-
-@app.errorhandler(403)
-def internal_error(error):
-    return render_template('403.html'), 403
-
-@app.errorhandler(404)
-def not_found_error(error):
-    return render_template('404.html'), 404
-
-@app.errorhandler(405)
-def not_found_error(error):
-    return render_template('405.html'), 405
-
-@app.errorhandler(406)
-def not_found_error(error):
-    return render_template('406.html'), 406
-
-@app.route('/documentai/generate-charts', methods=['POST'] )
+@app.route('/generate-charts', methods=['POST'] )
 
 def FileHandler():
     ContentType = request.files['Dataset'].content_type
     if "csv" in ContentType:
-        return run_csv(request.files['Dataset'])
+        request.files['Dataset'].save("fdata.csv")
+        return run_csv("fdata.csv")
     elif "excel" in ContentType:
-        return run_excel(request.files['Dataset'])
+        request.files['Dataset'].save("fdata.xlsx")
+        return run_excel("fdata.xlsx")
     else: 
         return Response(f'PLEASE UPLOAD A VALID FILETYPE: uploaded file type is {ContentType} \n Accepted file types are Excel or CSV', mimetype='text/json')
 
 def run_csv(FileName):
     Prompt = request.form.get('Prompt')
-    df = pd.read_csv(FileName)
+    df = pd.read_csv(FileName,nrows=100)
     df.to_csv("downloaded_Dataset.csv",index=False)
     if not Prompt:
         try:
             output = PromptResponse("Please create a chart of your chosing using the following data")
         except Exception as e:
             output = str(e)
-        return Response(output, mimetype='application/json')
+        return Response(output, mimetype='text/plain')
     else:
         try:
             output = PromptResponse(Prompt)
         except Exception as e:
             output = str(e)
-        return Response(output, mimetype='application/json')
+        return Response(output, mimetype='text/plain')
 
 def run_excel(FileName):
     Prompt = request.form.get('Prompt')
-    df = pd.read_excel(FileName)
-    df.to_csv("downloaded_Dataset.csv",index=False)
+    df = pd.read_excel(FileName,nrows=100)
+    df.to_csv("downloaded_Dataset.csv",index=False)   
     if not Prompt:
         try:
             output = PromptResponse("Please create a chart of your chosing using the following data")
         except Exception as e:
             output = str(e)
-        return Response(output, mimetype='application/json')
+        return Response(output, mimetype='text/plain')
     else:
         try:
             output = PromptResponse(Prompt)
         except Exception as e:
             output = str(e)
-        return Response(output, mimetype='application/json')
+        return Response(output, mimetype='text/plain')
 
-@app.route('/documentai/llama/chat', methods=['POST'] )
+@app.route('/llama/chat', methods=['POST'] )
 
 def MsgHandler():
     UserInput = request.form.get('msg')
     if UserInput:
         return PromptChat(UserInput)
     else: 
-        return Response(f'What can I help you with?', mimetype='application/json')
+        return Response(f'What can I help you with?', mimetype='text/plain')
 
 def llama_chat(UserInput): 
     if not UserInput:
@@ -106,13 +80,13 @@ def llama_chat(UserInput):
             Chatting = PromptChat("what can you do?")
         except Exception as e:
             Chatting = str(e)
-        return Response(Chatting, mimetype='application/json')
+        return Response(Chatting, mimetype='text/plain')
     else:
         try:
             Chatting = PromptChat(UserInput)
         except Exception as e:
             Chatting = str(e)
-        return Response(Chatting, mimetype='application/json')
+        return Response(Chatting, mimetype='text/plain')
 
 if __name__ == '__main__':
     app.run()
