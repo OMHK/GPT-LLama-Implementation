@@ -1,0 +1,23 @@
+[
+    {
+        "request": {
+            "endpoint": "Llama",
+            "params": "What is the capital of Jordan?"
+        },
+        "response": "The capital of Jordan is Amman."
+    },
+    {
+        "request": {
+            "endpoint": "Llama",
+            "params": "What is the capital of KSA?"
+        },
+        "response": "\n\nThe capital of the Kingdom of Saudi Arabia (KSA) is Riyadh."
+    },
+    {
+        "request": {
+            "endpoint": "Llama",
+            "params": "What was the last two questions I asked you ?"
+        },
+        "response": "\n\nBased on our conversation history, the last two questions you asked me were:\n\n1. What is the capital of KSA?\n2. What is the capital of Jordan?"
+    }
+]
